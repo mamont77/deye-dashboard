@@ -99,6 +99,26 @@ Coordinates are used to fetch weather data from the [Open-Meteo API](https://ope
 | `TELEGRAM_BOT_TOKEN` | Bot token from [@BotFather](https://t.me/BotFather) | — |
 | `TELEGRAM_ALLOWED_USERS` | Comma-separated list of allowed Telegram user IDs | — |
 
+**How to set up:**
+
+1. Message [@BotFather](https://t.me/BotFather) on Telegram and create a new bot with `/newbot`
+2. Copy the bot token into `TELEGRAM_BOT_TOKEN`
+3. To find your Telegram user ID, start your bot and send `/start` — it will reply with your ID
+4. Add your ID (and any other users) to `TELEGRAM_ALLOWED_USERS` as a comma-separated list
+5. Set `TELEGRAM_ENABLED=true` and restart the dashboard
+
+**Bot commands:**
+
+| Command | Description |
+|---------|-------------|
+| `/start` | Shows your Telegram user ID and authorization status |
+| `/battery` | Current battery SOC, voltage, power, and estimated time remaining |
+| `/outage` | Next scheduled power outage window and countdown |
+| `/grid` | Daily grid consumption report (import/export) |
+| `/test` | Sends sample battery and grid messages |
+
+The bot also provides a keyboard with Ukrainian-labeled buttons for quick access. Messages include weather-themed Ukrainian poetry excerpts.
+
 ### Data Files (optional)
 
 | Variable | Description | Default |
@@ -118,36 +138,50 @@ Coordinates are used to fetch weather data from the [Open-Meteo API](https://ope
 
 ## Local Development
 
-Use `deploy_local.sh` to run the dashboard locally with Telegram bot disabled:
+Use `deploy_local.sh` to run the dashboard locally with the Telegram bot disabled:
 
 ```bash
 chmod +x deploy_local.sh
 ./deploy_local.sh
 ```
 
-This sources your `.env`, disables the Telegram bot, activates the virtual environment, and starts the app.
+This sources your `.env`, overrides `TELEGRAM_ENABLED=false`, activates the virtual environment, and starts the app. Useful for UI development without triggering bot messages.
+
+You need a `.env` file with at least `INVERTER_IP` and `LOGGER_SERIAL` set. Either create one manually from `.env.example` or run `./deploy.sh` once to generate it interactively.
 
 ## Deploying to a Remote Server
 
-`deploy.sh` deploys the dashboard to a remote Linux server over SSH and sets it up as a systemd service.
+`deploy.sh` deploys the dashboard to a remote Linux server over SSH and sets it up as a systemd service. The remote server needs Python 3.7+, SSH access, and `sudo` for systemd management.
+
+### Prerequisites
+
+- SSH key-based access to the remote server (the script runs `ssh` and `rsync` non-interactively)
+- `sudo` privileges on the remote server (for systemd service setup)
+- Python 3.7+ installed on the remote server
 
 ### First-time deploy
 
-If no `.env` file exists, the script runs an interactive setup wizard that prompts for all settings and generates `.env` for you:
+If no `.env` file exists, the script runs an interactive setup wizard:
 
 ```bash
 chmod +x deploy.sh
 ./deploy.sh
 ```
 
-You'll be prompted for:
-1. Inverter IP and logger serial
-2. Remote server connection details (host, user, directory)
-3. Weather coordinates
-4. Outage schedule provider and group
-5. Telegram bot configuration
+The wizard prompts for all settings in order:
 
-After answering all prompts, the script writes `.env`, shows a summary, and asks for confirmation before deploying.
+1. **Inverter** — IP address and logger serial number
+2. **Deployment** — remote host, SSH user, install directory, service name
+3. **Weather** — latitude and longitude for forecast (defaults to Kyiv)
+4. **Outage schedule** — provider selection (Lvivoblenergo, Yasno, or none) with provider-specific follow-up questions
+5. **Telegram** — enable/disable, bot token, and allowed user IDs
+
+After answering all prompts, the script:
+- Writes the `.env` file
+- Prints a summary of all settings
+- Asks for confirmation before deploying
+
+If you decline, the `.env` is kept so you can edit it and re-run `./deploy.sh`.
 
 ### Subsequent deploys
 
@@ -157,12 +191,14 @@ When `.env` already exists, the script skips all prompts and deploys immediately
 ./deploy.sh
 ```
 
+To change settings, edit `.env` directly and re-deploy.
+
 ### What the deploy script does
 
-1. Copies application files to the remote server via `rsync`
-2. Creates a Python virtual environment and installs dependencies
-3. Creates and enables a systemd service
-4. Restarts the service
+1. **Rsync** — copies `app.py`, `inverter.py`, `telegram_bot.py`, `poems.py`, `outage_providers/`, `requirements.txt`, `templates/`, and `.env` to the remote server
+2. **Python setup** — creates a virtual environment (if needed) and installs dependencies from `requirements.txt`
+3. **Systemd service** — creates a service file at `/etc/systemd/system/<service-name>.service`, enables it, and restarts it
+4. The dashboard runs on port 8080 by default
 
 ### Managing the remote service
 
@@ -173,8 +209,11 @@ ssh user@host 'sudo systemctl status deye-dashboard'
 # View live logs
 ssh user@host 'sudo journalctl -u deye-dashboard -f'
 
-# Restart
+# Restart after config changes
 ssh user@host 'sudo systemctl restart deye-dashboard'
+
+# Stop the service
+ssh user@host 'sudo systemctl stop deye-dashboard'
 ```
 
 ## Finding Your Inverter Details
