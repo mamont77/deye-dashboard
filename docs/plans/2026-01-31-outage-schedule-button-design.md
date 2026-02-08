@@ -37,7 +37,7 @@ A Telegram bot button that answers "when will the power come back?" by combining
 ### Battery Survival Calculation
 
 ```
-available_kwh = 15.0 * (soc / 100)
+available_kwh = 16.0 * (soc / 100)
 outage_hours = (end - start) in hours
 needed_kwh = load_power_w / 1000 * outage_hours
 can_survive = available_kwh >= needed_kwh * 1.1  (10% safety margin)
@@ -67,7 +67,7 @@ Apologize, suggest checking poweron.loe.lviv.ua manually.
 ## Configuration
 
 - `OUTAGE_GROUP` — outage group (default: `4.1`)
-- `BATTERY_CAPACITY_KWH` — total usable battery capacity (default: `15.0`)
+- `BATTERY_CAPACITY_KWH` — total usable battery capacity (default: `16.0`)
 
 ## Files Changed
 
