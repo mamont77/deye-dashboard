@@ -103,9 +103,17 @@ Coordinates are used to fetch weather data from the [Open-Meteo API](https://ope
 
 1. Message [@BotFather](https://t.me/BotFather) on Telegram and create a new bot with `/newbot`
 2. Copy the bot token into `TELEGRAM_BOT_TOKEN`
-3. To find your Telegram user ID, start your bot and send `/start` — it will reply with your ID
-4. Add your ID (and any other users) to `TELEGRAM_ALLOWED_USERS` as a comma-separated list
-5. Set `TELEGRAM_ENABLED=true` and restart the dashboard
+3. Find your Telegram user ID (see below), add it to `TELEGRAM_ALLOWED_USERS`
+4. Set `TELEGRAM_ENABLED=true` and restart the dashboard
+
+**How to find your Telegram user ID:**
+
+There are two ways:
+
+- **Using this bot** — set `TELEGRAM_ENABLED=true` with your bot token and leave `TELEGRAM_ALLOWED_USERS` empty for now. Start the dashboard, then open your bot in Telegram and send `/start`. The bot will reply with your numeric user ID (e.g. `123456789`). Add it to `TELEGRAM_ALLOWED_USERS` and restart.
+- **Using @userinfobot** — search for `@userinfobot` in Telegram, start it, and it will immediately reply with your user ID.
+
+For multiple users, separate IDs with commas: `TELEGRAM_ALLOWED_USERS=123456789,987654321`
 
 **Bot commands:**
 
