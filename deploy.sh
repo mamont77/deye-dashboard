@@ -212,6 +212,7 @@ FILES=(
     "outage_providers"
     "requirements.txt"
     "templates"
+    "discover_inverter.py"
     ".env"
 )
 
