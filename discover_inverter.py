@@ -9,10 +9,11 @@ Can be run standalone or imported by deploy_local.sh via --json flag.
 """
 
 import socket
+import subprocess
 import sys
 import threading
 import json
-import netifaces
+import re
 
 
 SOLARMAN_PORT = 8899
@@ -24,29 +25,81 @@ SKIP_IFACE_PREFIXES = ("utun", "tun", "tap", "docker", "br-", "veth", "awdl", "l
 
 
 def get_local_subnets():
-    """Return a list of (prefix, local_ip) from physical network interfaces."""
+    """Return a list of (prefix, local_ip) from physical network interfaces.
+
+    Uses 'ip addr' on Linux or 'ifconfig' on macOS — no C extensions needed.
+    """
+    ips = _get_ips_from_ip_addr() or _get_ips_from_ifconfig() or _get_ips_from_hostname()
     subnets = []
     seen_prefixes = set()
-    for iface in netifaces.interfaces():
-        # Skip loopback, VPN tunnels, and virtual interfaces
-        if iface == "lo" or iface == "lo0":
+    for iface, ip in ips:
+        if ip.startswith("127."):
             continue
         if any(iface.startswith(p) for p in SKIP_IFACE_PREFIXES):
             continue
-
-        addrs = netifaces.ifaddresses(iface)
-        if netifaces.AF_INET in addrs:
-            for addr_info in addrs[netifaces.AF_INET]:
-                ip = addr_info.get("addr", "")
-                if ip.startswith("127."):
-                    continue
-                parts = ip.split(".")
-                if len(parts) == 4:
-                    prefix = ".".join(parts[:3])
-                    if prefix not in seen_prefixes:
-                        seen_prefixes.add(prefix)
-                        subnets.append((prefix, ip))
+        parts = ip.split(".")
+        if len(parts) == 4:
+            prefix = ".".join(parts[:3])
+            if prefix not in seen_prefixes:
+                seen_prefixes.add(prefix)
+                subnets.append((prefix, ip))
     return subnets
+
+
+def _get_ips_from_ip_addr():
+    """Parse 'ip -4 addr show' output (Linux)."""
+    try:
+        out = subprocess.check_output(
+            ["ip", "-4", "addr", "show"], stderr=subprocess.DEVNULL, text=True
+        )
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        return None
+    results = []
+    current_iface = ""
+    for line in out.splitlines():
+        # Interface line: "2: eth0: <...>"
+        m = re.match(r"\d+:\s+(\S+?):", line)
+        if m:
+            current_iface = m.group(1)
+        # Address line: "    inet 192.168.1.5/24 ..."
+        m = re.search(r"inet\s+(\d+\.\d+\.\d+\.\d+)", line)
+        if m:
+            results.append((current_iface, m.group(1)))
+    return results if results else None
+
+
+def _get_ips_from_ifconfig():
+    """Parse 'ifconfig' output (macOS / older Linux)."""
+    try:
+        out = subprocess.check_output(
+            ["ifconfig"], stderr=subprocess.DEVNULL, text=True
+        )
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        return None
+    results = []
+    current_iface = ""
+    for line in out.splitlines():
+        # Interface line: "en0: flags=..."
+        m = re.match(r"(\S+?):\s+flags", line)
+        if m:
+            current_iface = m.group(1)
+        # Address line: "inet 192.168.1.5 ..."
+        m = re.search(r"inet\s+(\d+\.\d+\.\d+\.\d+)", line)
+        if m:
+            results.append((current_iface, m.group(1)))
+    return results if results else None
+
+
+def _get_ips_from_hostname():
+    """Fallback: use socket to get the default IP."""
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.close()
+        return [("default", ip)]
+    except Exception:
+        return None
 
 
 def scan_port(ip, port, timeout, results, lock):

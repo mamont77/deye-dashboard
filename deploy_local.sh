@@ -43,7 +43,7 @@ if [ ! -f .env ]; then
         python3 -m venv venv
     fi
     source venv/bin/activate
-    pip install -q netifaces pysolarmanv5 2>/dev/null
+    pip install -q pysolarmanv5 2>/dev/null
 
     echo "  Scanning local network for Deye/Solarman inverters..."
     echo ""
