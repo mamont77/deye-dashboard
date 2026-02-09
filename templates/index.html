@@ -2971,6 +2971,9 @@
             const pathHome = document.getElementById('ef-path-home');
             const pathGrid = document.getElementById('ef-path-grid');
 
+            // Energy flow diagram HTML not present — skip
+            if (!inverterValue || !solarComp) return;
+
             // Power values
             const solarPower = data.pv_total_power || 0;
             const batteryPower = data.battery_power || 0;
