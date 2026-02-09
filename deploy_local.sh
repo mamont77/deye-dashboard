@@ -35,10 +35,53 @@ if [ ! -f .env ]; then
     echo "Press Enter to accept defaults shown in [brackets]."
     echo ""
 
-    # --- Inverter ---
+    # --- Inverter (auto-discover or manual) ---
     echo -e "${YELLOW}Inverter Settings${NC}"
-    ask INVERTER_IP "Inverter IP address" ""
-    ask LOGGER_SERIAL "Logger serial number" ""
+
+    # Ensure dependencies are available for discovery
+    if [ ! -d "venv" ]; then
+        python3 -m venv venv
+    fi
+    source venv/bin/activate
+    pip install -q netifaces pysolarmanv5 2>/dev/null
+
+    echo "  Scanning local network for Deye/Solarman inverters..."
+    echo ""
+    DISCOVER_JSON=$(python3 discover_inverter.py --json 2>/dev/null || echo "[]")
+    DISCOVER_COUNT=$(echo "$DISCOVER_JSON" | python3 -c "import sys,json; print(len(json.load(sys.stdin)))" 2>/dev/null || echo "0")
+
+    if [ "$DISCOVER_COUNT" -gt 0 ]; then
+        echo -e "  ${GREEN}Found ${DISCOVER_COUNT} device(s) with port 8899 open:${NC}"
+        echo ""
+        # Display each discovered device
+        for i in $(seq 0 $((DISCOVER_COUNT - 1))); do
+            DEV_IP=$(echo "$DISCOVER_JSON" | python3 -c "import sys,json; d=json.load(sys.stdin)[$i]; print(d['ip'])")
+            DEV_MODEL=$(echo "$DISCOVER_JSON" | python3 -c "import sys,json; d=json.load(sys.stdin)[$i]; print(d.get('model') or 'Unknown')")
+            echo -e "    ${CYAN}[$((i + 1))]${NC} IP: ${BOLD}${DEV_IP}${NC}  |  Model: ${DEV_MODEL}"
+        done
+        echo -e "    ${CYAN}[$((DISCOVER_COUNT + 1))]${NC} Enter manually"
+        echo ""
+
+        read -rp "  Select device [1]: " DEV_CHOICE
+        DEV_CHOICE="${DEV_CHOICE:-1}"
+
+        if [ "$DEV_CHOICE" -le "$DISCOVER_COUNT" ] 2>/dev/null; then
+            IDX=$((DEV_CHOICE - 1))
+            INVERTER_IP=$(echo "$DISCOVER_JSON" | python3 -c "import sys,json; d=json.load(sys.stdin)[$IDX]; print(d['ip'])")
+            echo -e "  ${GREEN}Selected: ${INVERTER_IP}${NC}"
+            echo ""
+            ask LOGGER_SERIAL "Logger serial number" ""
+        else
+            ask INVERTER_IP "Inverter IP address" ""
+            ask LOGGER_SERIAL "Logger serial number" ""
+        fi
+    else
+        echo -e "  ${YELLOW}No inverters found on the local network.${NC}"
+        echo "  You can enter the details manually."
+        echo ""
+        ask INVERTER_IP "Inverter IP address" ""
+        ask LOGGER_SERIAL "Logger serial number" ""
+    fi
     echo ""
 
     # --- Weather ---

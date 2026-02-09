@@ -3374,11 +3374,13 @@
 
             var now = new Date();
             var progress = 0;
+            var showBar = false;
 
-            if (d.status === 'active' || gridOffline) {
-                // Red bar: outage progress
+            if (gridOffline) {
+                // Red bar: outage progress (only when grid is actually offline)
+                showBar = true;
                 fill.className = 'grid-banner-bar-fill red';
-                if (d.start_time && d.end_time) {
+                if (d.status === 'active' && d.start_time && d.end_time) {
                     var start = new Date(d.start_time);
                     var end = new Date(d.end_time);
                     var total = end - start;
@@ -3388,6 +3390,7 @@
                 }
             } else if (d.status === 'upcoming' && d.upcoming_windows && d.upcoming_windows.length > 0) {
                 // Green bar: electricity time consumed
+                showBar = true;
                 fill.className = 'grid-banner-bar-fill green';
                 var outageStart = new Date(d.upcoming_windows[0].start);
                 if (d.electricity_start) {
@@ -3400,6 +3403,10 @@
                 }
             }
 
+            if (!showBar) {
+                bar.style.display = 'none';
+                return;
+            }
             bar.style.display = 'block';
             var remaining = Math.max(0, 100 - progress);
             fill.style.width = remaining + '%';
