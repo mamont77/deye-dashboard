@@ -202,6 +202,7 @@ class DeyeInverter:
 
         except Exception as e:
             data["error"] = str(e)
+        finally:
             self.disconnect()
 
         return data
@@ -288,6 +289,7 @@ class BatterySampler:
                     self.inverter.connect()
                 raw_v = self.inverter.read_register(587)
                 raw_soc = self.inverter.read_register(588)
+                self.inverter.disconnect()
             voltage = raw_v / 100
         except Exception:
             logger.debug("BatterySampler: failed to read battery registers")

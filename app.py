@@ -202,7 +202,7 @@ inverter = DeyeInverter(INVERTER_IP, LOGGER_SERIAL)
 inverter_config = build_inverter_config(inverter)
 inverter.config = inverter_config
 
-battery_sampler = BatterySampler(inverter)
+battery_sampler = BatterySampler(inverter, interval=30)
 battery_sampler.start()
 
 # Outage schedule provider
