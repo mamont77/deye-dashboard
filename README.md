@@ -1,13 +1,13 @@
 # Deye Solar Dashboard
 
-A web dashboard for monitoring Deye solar inverters in real-time. Displays solar production, battery status, grid power, home consumption, weather conditions, and power outage schedules.
+A web dashboard for monitoring Deye solar inverters in real-time. Supports both single-phase (e.g. SUN-6K-SG03LP1) and 3-phase hybrid models. Displays solar production, battery status, grid power, home consumption, weather conditions, and power outage schedules.
 
 ![Dashboard Preview](docs/preview.png)
 
 ## Features
 
 - **Real-time monitoring** — solar production, battery SOC, grid power, and load consumption
-- **3-phase load analytics** — per-phase power distribution with daily statistics
+- **Load analytics** — per-phase power distribution with daily statistics (3-phase systems)
 - **Weather** — current conditions and forecast via Open-Meteo API
 - **Outage schedule** — upcoming power outage windows (Lvivoblenergo or Yasno providers)
 - **Grid outage detection** — voice alerts and browser notifications when power goes out

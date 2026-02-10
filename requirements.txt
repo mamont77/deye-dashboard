@@ -1,3 +1,4 @@
 pysolarmanv5
 flask
 requests
+python-dotenv

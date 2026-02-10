@@ -1,4 +1,10 @@
 """Deye Dashboard - Simple web dashboard for Deye solar inverters."""
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from flask import Flask, render_template, jsonify, request
 from inverter import DeyeInverter, BatterySampler, InverterConfig
 from telegram_bot import TelegramBot
@@ -582,4 +588,4 @@ if __name__ == "__main__":
     # - Otherwise skip (we're the reloader parent, child will start it)
     if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
         start_telegram_bot()
-    app.run(host="0.0.0.0", port=8080, debug=True)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)), debug=True)

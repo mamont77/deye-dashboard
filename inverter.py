@@ -92,6 +92,115 @@ class DeyeInverter:
 
     def _read_all_data_unlocked(self, battery_sampler=None) -> dict:
         """Internal: read all data (caller must hold self.lock)."""
+        if self.config.phases == 1:
+            return self._read_1p_data_unlocked(battery_sampler)
+        return self._read_3p_data_unlocked(battery_sampler)
+
+    def _read_1p_data_unlocked(self, battery_sampler=None) -> dict:
+        """Read all data from single-phase hybrid inverter (Sunsynk register map)."""
+        data = {}
+
+        try:
+            if not self.inverter:
+                self.connect()
+
+            # Solar PV
+            data["pv1_power"] = self.read_register(186)
+            time.sleep(0.05)
+            if self.config.pv_strings >= 2:
+                data["pv2_power"] = self.read_register(187)
+                time.sleep(0.05)
+            else:
+                data["pv2_power"] = 0
+            data["pv_total_power"] = data["pv1_power"] + data["pv2_power"]
+
+            # Battery
+            if self.config.has_battery:
+                data["battery_voltage"] = self.read_register(183) / 100
+                time.sleep(0.05)
+                raw_current = self.read_register(191)
+                data["battery_current"] = -to_signed(raw_current) / 100
+                time.sleep(0.05)
+
+                raw_soc = self.read_register(184)
+                time.sleep(0.05)
+                data["battery_soc_raw"] = raw_soc
+
+                if battery_sampler:
+                    smoothed_v = battery_sampler.get_voltage()
+                    if smoothed_v is not None:
+                        data["battery_voltage"] = smoothed_v
+                    smoothed_soc = battery_sampler.get_soc()
+                    if smoothed_soc is not None:
+                        data["battery_soc"] = smoothed_soc
+                    else:
+                        data["battery_soc"] = raw_soc
+                else:
+                    data["battery_soc"] = raw_soc
+                data["battery_power"] = int(data["battery_voltage"] * data["battery_current"])
+            else:
+                data["battery_voltage"] = 0
+                data["battery_current"] = 0
+                data["battery_soc"] = 0
+                data["battery_soc_raw"] = 0
+                data["battery_power"] = 0
+
+            # Grid
+            data["grid_voltage"] = self.read_register(150) / 10
+            time.sleep(0.05)
+            raw_grid_power = self.read_register(169)
+            data["grid_power"] = to_signed(raw_grid_power)
+            time.sleep(0.05)
+
+            # Load
+            data["load_power"] = self.read_register(178)
+            time.sleep(0.05)
+            data["load_l1"] = self.read_register(176)
+            time.sleep(0.05)
+
+            # Temperatures
+            data["dc_temp"] = (self.read_register(90) - 1000) / 10
+            time.sleep(0.05)
+            data["heatsink_temp"] = (self.read_register(91) - 1000) / 10
+            time.sleep(0.05)
+
+            # Daily stats
+            data["daily_pv"] = self.read_register(108) / 10
+            time.sleep(0.05)
+            data["daily_grid_import"] = self.read_register(76) / 10
+            time.sleep(0.05)
+            data["daily_grid_export"] = self.read_register(77) / 10
+            time.sleep(0.05)
+            data["daily_load"] = self.read_register(84) / 10
+            time.sleep(0.05)
+
+            # Status indicators
+            if self.config.has_battery:
+                if data["battery_current"] > 0:
+                    data["battery_status"] = "Charging"
+                elif data["battery_current"] < 0:
+                    data["battery_status"] = "Discharging"
+                else:
+                    data["battery_status"] = "Idle"
+            else:
+                data["battery_status"] = "N/A"
+
+            if data["grid_power"] > 0:
+                data["grid_status"] = "Importing"
+            elif data["grid_power"] < 0:
+                data["grid_status"] = "Exporting"
+            else:
+                data["grid_status"] = "Idle"
+
+        except Exception as e:
+            data["error"] = str(e)
+        finally:
+            self.disconnect()
+
+        return data
+
+    def _read_3p_data_unlocked(self, battery_sampler=None) -> dict:
+        """Read all data from 3-phase hybrid inverter (original register map)."""
         data = {}
 
         try:
@@ -283,12 +392,16 @@ class BatterySampler:
 
     def _sample(self):
         """Read battery voltage and SOC once, store if valid."""
+        if self.inverter.config.phases == 1:
+            reg_voltage, reg_soc = 183, 184
+        else:
+            reg_voltage, reg_soc = 587, 588
         try:
             with self.inverter.lock:
                 if not self.inverter.inverter:
                     self.inverter.connect()
-                raw_v = self.inverter.read_register(587)
-                raw_soc = self.inverter.read_register(588)
+                raw_v = self.inverter.read_register(reg_voltage)
+                raw_soc = self.inverter.read_register(reg_soc)
                 self.inverter.disconnect()
             voltage = raw_v / 100
         except Exception:
