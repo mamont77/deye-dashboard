@@ -1525,6 +1525,34 @@
             color: #fbbf24;
         }
 
+        .settings-btn.donate-btn {
+            background: rgba(250, 204, 21, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(250, 204, 21, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .settings-btn.donate-btn:hover {
+            background: rgba(250, 204, 21, 0.3);
+        }
+        .donate-qr {
+            margin-top: 10px;
+            text-align: center;
+        }
+        .donate-qr img {
+            width: 140px;
+            height: 140px;
+            border-radius: 8px;
+            background: #fff;
+            padding: 4px;
+        }
+        .donate-qr-label {
+            font-size: 0.65rem;
+            color: #475569;
+            margin-top: 4px;
+        }
+
         .settings-btn.reset-btn {
             background: rgba(239, 68, 68, 0.2);
             color: #f87171;
@@ -3186,6 +3214,15 @@
             <label>Configuration</label>
             <button class="settings-btn" onclick="openConfigEditor()">Edit Configuration</button>
             <button class="settings-btn reset-btn" style="margin-top: 8px;" onclick="resetConfiguration()">Factory Reset</button>
+        </div>
+
+        <div class="settings-section">
+            <label>Support</label>
+            <a href="https://donatello.to/IvanUrsul" target="_blank" rel="noopener" class="settings-btn donate-btn" style="text-decoration: none;">&#9749; Support on Donatello</a>
+            <div class="donate-qr">
+                <img src="data:image/png;base64,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 pCuYlLg8bj98U8VR3qLiuLjAv/aEtYKt Yxn Lpu3gV/cyODn1zO4dhO4fhO4Pak3WRUUACf+/E59BVjGxbHj/FH1ImwTdHH8jxfhjvBOrpwcO84fVe/aE0Jwg4MbinD/PeFW4Lg4duSoegtwcnLUfdS4a4e7FwA4tHERPv4bIZ5avQenfqiKjSPvI5+wODk56j5q3KVv7woKgP6WO/Fbvx6NLsqpH6pi48h7Uj8sbtv/qtu3jzxZh4uX3tQcTW4qkqWeTM/miznXdQaGb2PbsYC+xAao+MgCHG5YFMhR1EVM9UNKWYOffhiEaDy+8uDHDZIKk0eNV5UXBj4LUCd3FAJf3rQIf9MYvWQF2O2HfrF95H2oZ1hzYfM4chsOjXPx1Beu4adpXm+09q8rwqqP0b6r0nFcu25hZC5MCqq5ErmElcXGceScOsq3Lt7Gnq/dwC8srhA/8isFaPvdIpQuoZ/o6z6unbr/qCAJK8JLQm7HkZvmyYpCnNp5F77Xdhf+4pk78MvFBdD9xcvCBUDZ4gX4v0134nttd+Hvt96pJVmZOK496v3HFpGdYQG0T0nXZljzcXsS+Gk6g0s/msTglUkM/2gSo1cz+Pd0RlkW8UtFwK99aAGS9xbgk79ZiE/8xgJ8OFZg7L1Uvk9cVNud6jpUyAwr4m4NLor1dFO4ALgnUYB7EoWoKndT/2TquHbpP+aJ7JIQMHscuUs7P64T1rZwNW5KIp2wTB5H7qIw0FXC2hauxk1JZN9h6RC2mRbRCfND0RYc30tSiEtdfocVuRmWyePIXTxqPCyEtS1cFJdSwnKGZeMJ4NXp0aaAMIsOYaRJOIg5g947t9mK3zHIoS1UkISFYNNsGwJCQL8w0iS2xJwU9x6WhJWFu7A2ckvC2bS2dwZ6J2BDQGhCGGkSG2JOLvfODe7C2sgnLApXRNNukVROj5xcLqlidvHeuWG6LbwQ+SVhWGOmOjHIJFQxm7z3sC0Js5hsCy9EfoZFsdtiescmjMJI3W6rfn+n+xrUcIyJksgnLApXRNNukVROj5xcLqlidvHeuWG6LbwQ+SVhWGOmOjHIJFQxm7z3sC0Js5hsCy9EfoZFsdtiescmjMJI3W6rfn+n+xrUcIyJksgnLApXRNNukVROj5xcLqlidvHeuWG6LbwQ+SVhWGOmOjHIJFQxm7z3sC0Js5hsCy9EfoZFsdtiescmjMJI3W6rfn+n+xrUcIyJksgTlikZOISSREfFsVNCW9cNqqyZBj0Wn5DxSwuJgP10THxXBUfFsVNCW9cNqqyZBj0Wn5DxSwuJgP1eTFUfFsVJNW9cNqqyZBj0Wn5DxSwuJgP1UTFsdN8W9cNqqyZBj0Wn5DxSwuJgP1UTFcdNqm5c9bYlPuEG1RQRJWjrpX/z+oHCwcIdTsW+AHRMuBDTmUxcHMJ9u4K0ONNKK+sAHRMuBDTmUxcHMJ9u4K0ONNKK+sAHRMuBDTmUxcHMJ9u4K0ONNKK+sAHRMuBDTmUxcHMJ9u4K0ONNKK+sAHRMuBDTmUxcHMJ9u4K0ONNKK+sAHRMuBDTmUxcHMJ9u4K0ONNKK+sAHRMuBDTmUxcHMJ9u4K0ONNHJcQh+LCCC2ENNKK+sAHRMuBDTmUxcHMJys37OGMBpxJ+BIBq3gBMXEJIEQWg2kD+pI3PJaH08uVSjYfpE/6SVxCaFEFIMpA/qSMJiDhcRJ9exn5QJi4u9u4K0OJMl4UyiHHcU8C0dOJ5Bc52CpywhOBytHqK5MEhdsEJguAMkrAEQXAGSViCIDiDJCxBEJxBEpYgCM4gCUsQBGeQhCUIgjNIwhIEwRkkYQmC4AySsARBcAZJWIIgOIMkLEEQnEESliAIziAJSxAEZ5CEJQiCM0jCEgTBGSRhCYLgDJKwBEFwBklYgiA4gyQsQRCcQRKWIAjOIAlLEARnkIQlCIIzSMISBMEZ/gPGe1V6HNVlewAAAABJRU5ErkJggg==" alt="Donatello QR code">
+                <div class="donate-qr-label">Scan to donate</div>
+            </div>
         </div>
     </div>
 
