@@ -864,6 +864,28 @@ def save_config():
     return jsonify({"status": "ok", "restarting": True})
 
 
+@app.route("/api/config/reset", methods=["POST"])
+def reset_config():
+    """Delete .env and restart the service to enter onboarding mode."""
+    env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+    if os.path.exists(env_path):
+        os.remove(env_path)
+        logger.info("Deleted .env — entering first-run mode on restart")
+    else:
+        logger.info(".env not found — already in first-run mode")
+
+    def _restart():
+        time.sleep(2)
+        try:
+            subprocess.Popen(["sudo", "systemctl", "restart", "deye-dashboard"])
+        except Exception:
+            logger.warning("Could not restart via systemctl, exiting process")
+            os._exit(0)
+
+    threading.Timer(0, _restart).start()
+    return jsonify({"status": "ok", "restarting": True})
+
+
 @app.route("/api/config/discover")
 def config_discover():
     """Discover inverters on the local network with retries."""

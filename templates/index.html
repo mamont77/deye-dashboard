@@ -1525,6 +1525,15 @@
             color: #fbbf24;
         }
 
+        .settings-btn.reset-btn {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .settings-btn.reset-btn:hover {
+            background: rgba(239, 68, 68, 0.4);
+        }
+
         .settings-btn.rollback-btn:hover {
             background: rgba(251, 191, 36, 0.2);
         }
@@ -3176,6 +3185,7 @@
         <div class="settings-section">
             <label>Configuration</label>
             <button class="settings-btn" onclick="openConfigEditor()">Edit Configuration</button>
+            <button class="settings-btn reset-btn" style="margin-top: 8px;" onclick="resetConfiguration()">Factory Reset</button>
         </div>
     </div>
 
@@ -4829,6 +4839,23 @@
         function openConfigEditor() {
             toggleSettingsPanel();
             showOnboarding(true);
+        }
+
+        function resetConfiguration() {
+            if (!confirm('This will erase all settings and restart the dashboard in setup mode. Are you sure?')) return;
+            if (!confirm('Really reset? This cannot be undone.')) return;
+
+            fetch('/api/config/reset', { method: 'POST' })
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (data.status === 'ok') {
+                        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#94a3b8;font-size:1.2rem;">Restarting\u2026</div>';
+                        setTimeout(function() { location.reload(); }, 4000);
+                    }
+                })
+                .catch(function() {
+                    alert('Reset failed. Try again.');
+                });
         }
 
         // Check first run on page load
