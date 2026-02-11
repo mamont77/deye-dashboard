@@ -1358,34 +1358,32 @@
             color: #fff;
         }
 
-        /* Debug Panel */
-        .debug-toggle {
+        /* Settings Panel */
+        .settings-toggle-btn {
             position: fixed;
-            top: 50%;
-            right: 0;
-            transform: translateY(-50%);
-            width: 20px;
-            height: 60px;
-            background: rgba(255,255,255,0.1);
-            border: none;
-            border-radius: 8px 0 0 8px;
+            top: 20px;
+            right: 128px;
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: #94a3b8;
             cursor: pointer;
-            opacity: 0.3;
-            transition: opacity 0.3s;
-            z-index: 999;
+            font-size: 1.2rem;
+            z-index: 100;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .debug-toggle:hover {
-            opacity: 1;
-        }
-
-        .debug-toggle::after {
-            content: '‹';
+        .settings-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
             color: #fff;
-            font-size: 14px;
         }
 
-        .debug-panel {
+        .settings-panel {
             position: fixed;
             top: 0;
             right: -300px;
@@ -1399,11 +1397,11 @@
             overflow-y: auto;
         }
 
-        .debug-panel.open {
+        .settings-panel.open {
             right: 0;
         }
 
-        .debug-panel h3 {
+        .settings-panel h3 {
             color: #94a3b8;
             font-size: 0.9rem;
             margin-bottom: 15px;
@@ -1412,7 +1410,7 @@
             align-items: center;
         }
 
-        .debug-panel .close-btn {
+        .settings-panel .close-btn {
             background: none;
             border: none;
             color: #64748b;
@@ -1420,24 +1418,24 @@
             cursor: pointer;
         }
 
-        .debug-panel .close-btn:hover {
+        .settings-panel .close-btn:hover {
             color: #fff;
         }
 
-        .debug-section {
+        .settings-section {
             margin-bottom: 20px;
             padding-bottom: 15px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
-        .debug-section label {
+        .settings-section label {
             display: block;
             color: #64748b;
             font-size: 0.75rem;
             margin-bottom: 5px;
         }
 
-        .debug-btn {
+        .settings-btn {
             width: 100%;
             padding: 10px;
             background: rgba(255,255,255,0.1);
@@ -1450,20 +1448,11 @@
             transition: background 0.2s;
         }
 
-        .debug-btn:hover {
+        .settings-btn:hover {
             background: rgba(255,255,255,0.2);
         }
 
-        .debug-btn.danger {
-            border-color: rgba(239, 68, 68, 0.5);
-            color: #f87171;
-        }
-
-        .debug-btn.danger:hover {
-            background: rgba(239, 68, 68, 0.2);
-        }
-
-        .debug-info {
+        .settings-info {
             font-size: 0.75rem;
             color: #64748b;
             font-family: monospace;
@@ -1473,7 +1462,7 @@
             word-break: break-all;
         }
 
-        .debug-version-badge {
+        .settings-version-badge {
             display: inline-block;
             font-family: monospace;
             font-size: 0.8rem;
@@ -1484,7 +1473,7 @@
             border: 1px solid rgba(99, 102, 241, 0.3);
         }
 
-        .debug-update-available {
+        .settings-update-available {
             background: rgba(34, 197, 94, 0.15);
             border: 1px solid rgba(34, 197, 94, 0.3);
             color: #4ade80;
@@ -1496,7 +1485,7 @@
             gap: 8px;
         }
 
-        .debug-update-available .pulse-dot {
+        .settings-update-available .pulse-dot {
             width: 8px;
             height: 8px;
             background: #4ade80;
@@ -1509,7 +1498,7 @@
             50% { opacity: 0.3; }
         }
 
-        .debug-select {
+        .settings-select {
             width: 100%;
             padding: 6px 8px;
             background: rgba(0,0,0,0.3);
@@ -1520,21 +1509,21 @@
             font-family: monospace;
         }
 
-        .debug-btn.update-btn {
+        .settings-btn.update-btn {
             border-color: rgba(34, 197, 94, 0.5);
             color: #4ade80;
         }
 
-        .debug-btn.update-btn:hover {
+        .settings-btn.update-btn:hover {
             background: rgba(34, 197, 94, 0.2);
         }
 
-        .debug-btn.rollback-btn {
+        .settings-btn.rollback-btn {
             border-color: rgba(251, 191, 36, 0.5);
             color: #fbbf24;
         }
 
-        .debug-btn.rollback-btn:hover {
+        .settings-btn.rollback-btn:hover {
             background: rgba(251, 191, 36, 0.2);
         }
 
@@ -2220,7 +2209,7 @@
             100% { opacity: 0; transform: translate(-50%, -40px) scale(1); }
         }
 
-        /* ===== EASTER EGG DEMO KEYFRAMES (debug panel instant play) ===== */
+        /* ===== EASTER EGG DEMO KEYFRAMES ===== */
 
         @keyframes shooting-star-demo {
             0% { transform: translateX(-10px) translateY(0); opacity: 0; }
@@ -2385,6 +2374,14 @@
         </svg>
         <svg id="fullscreen-icon-exit" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
             <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>
+        </svg>
+    </button>
+
+    <!-- Settings Button -->
+    <button class="settings-toggle-btn" onclick="toggleSettingsPanel()" title="Settings">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
         </svg>
     </button>
 
@@ -2715,109 +2712,37 @@
 
     </div>
 
-    <!-- Debug Toggle Button -->
-    <button class="debug-toggle" onclick="toggleDebugPanel()" title="Debug Panel"></button>
-
-    <!-- Debug Panel -->
-    <div class="debug-panel" id="debug-panel">
+    <!-- Settings Panel -->
+    <div class="settings-panel" id="settings-panel">
         <h3>
-            Debug Panel
-            <button class="close-btn" onclick="toggleDebugPanel()">&times;</button>
+            Settings
+            <button class="close-btn" onclick="toggleSettingsPanel()">&times;</button>
         </h3>
 
-        <div class="debug-section">
-            <label>Alerts</label>
-            <button class="debug-btn" onclick="testOutageAlert()">Test Outage Alert</button>
-            <button class="debug-btn" onclick="testRestoreAlert()">Test Restore Alert</button>
-        </div>
-
-        <div class="debug-section">
-            <label>Data</label>
-            <button class="debug-btn" onclick="clearOutageHistory()">Clear Outage History</button>
-            <button class="debug-btn" onclick="clearPhaseStats()">Clear Phase Stats</button>
-        </div>
-
-        <div class="debug-section">
-            <label>Weather Mode Override</label>
-            <button class="debug-btn" onclick="debugSetWeatherMode('')">Auto (reset)</button>
-            <button class="debug-btn" onclick="debugSetWeatherMode('clear_day')">Clear Day</button>
-            <button class="debug-btn" onclick="debugSetWeatherMode('clear_night')">Clear Night</button>
-            <button class="debug-btn" onclick="debugSetWeatherMode('cloudy')">Cloudy</button>
-            <button class="debug-btn" onclick="debugSetWeatherMode('rain')">Rain</button>
-            <button class="debug-btn" onclick="debugSetWeatherMode('snow')">Snow</button>
-            <button class="debug-btn" onclick="debugSetWeatherMode('thunderstorm')">Thunderstorm</button>
-            <button class="debug-btn" onclick="debugSetWeatherMode('fog')">Fog</button>
-            <button class="debug-btn" onclick="debugSetWeatherMode('dawn_dusk')">Dawn/Dusk</button>
-            <div class="debug-info" id="debug-weather-mode">Mode: --</div>
-        </div>
-
-        <div class="debug-section">
-            <label>Battery Overlay Override</label>
-            <button class="debug-btn" onclick="debugSetBatteryOverride(-1)">Auto (reset)</button>
-            <button class="debug-btn" onclick="debugSetBatteryOverride(45)">SOC 45% (light red)</button>
-            <button class="debug-btn" onclick="debugSetBatteryOverride(25)">SOC 25% (medium red)</button>
-            <button class="debug-btn" onclick="debugSetBatteryOverride(5)">SOC 5% (heavy red)</button>
-        </div>
-
-        <div class="debug-section">
-            <label>Easter Eggs (trigger now)</label>
-            <button class="debug-btn" onclick="debugTriggerEasterEgg('shooting-star')">Shooting Star (night)</button>
-            <button class="debug-btn" onclick="debugTriggerEasterEgg('bird')">Bird (day)</button>
-            <button class="debug-btn" onclick="debugTriggerEasterEgg('firefly')">Firefly (dawn)</button>
-            <button class="debug-btn" onclick="debugTriggerEasterEgg('puddle-ripple')">Puddle Ripple (rain)</button>
-            <button class="debug-btn" onclick="debugTriggerEasterEgg('big-flake')">Big Flake (snow)</button>
-            <button class="debug-btn" onclick="debugTriggerEasterEgg('leaf')">Leaf (cloudy)</button>
-            <button class="debug-btn" onclick="debugTriggerEasterEgg('ghost')">Ghost (fog)</button>
-        </div>
-
-        <div class="debug-section" id="debug-outage-section">
-            <label>Outage Schedule Override</label>
-            <button class="debug-btn" onclick="debugOutageOverride('reset')">Auto (reset)</button>
-            <button class="debug-btn" onclick="debugOutageOverride('upcoming')">Upcoming outage in 2h</button>
-            <button class="debug-btn" onclick="debugOutageOverride('active')">Active outage, back in 1h</button>
-            <button class="debug-btn" onclick="debugOutageOverride('clear')">No outages today</button>
-            <button class="debug-btn" onclick="debugOutageOverride('unknown')">Unscheduled outage</button>
-            <div class="debug-info" id="debug-outage-mode">Mode: auto</div>
-        </div>
-
-        <div class="debug-section" id="debug-generator-section" style="display: none;">
-            <label>Generator Override</label>
-            <button class="debug-btn" onclick="debugGeneratorOverride('reset')">Auto (reset)</button>
-            <button class="debug-btn" onclick="debugGeneratorOverride(3000)">Generator ON 3000W</button>
-            <button class="debug-btn" onclick="debugGeneratorOverride(5000)">Generator ON 5000W</button>
-            <button class="debug-btn" onclick="debugGeneratorOverride(0)">Generator OFF</button>
-            <div class="debug-info" id="debug-generator-mode">Mode: auto</div>
-        </div>
-
-        <div class="debug-section" id="debug-ota-section">
+        <div class="settings-section" id="settings-ota-section">
             <label>OTA Updates</label>
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
                 <span style="color: #94a3b8; font-size: 0.8rem;">Version:</span>
-                <span class="debug-version-badge" id="ota-version">...</span>
+                <span class="settings-version-badge" id="ota-version">...</span>
             </div>
-            <div class="debug-update-available" id="ota-update-notice" style="display: none;">
+            <div class="settings-update-available" id="ota-update-notice" style="display: none;">
                 <span class="pulse-dot"></span>
                 <span id="ota-update-text">Update available</span>
             </div>
             <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px;">
-                <button class="debug-btn" onclick="otaCheckNow()">Check for Updates</button>
-                <button class="debug-btn update-btn" id="ota-apply-btn" style="display: none;" onclick="otaApplyUpdate()">Update</button>
+                <button class="settings-btn" onclick="otaCheckNow()">Check for Updates</button>
+                <button class="settings-btn update-btn" id="ota-apply-btn" style="display: none;" onclick="otaApplyUpdate()">Update</button>
             </div>
             <div style="margin-top: 8px;">
                 <label style="font-size: 0.75rem; color: #94a3b8;">Rollback to:</label>
                 <div style="display: flex; gap: 6px; margin-top: 4px;">
-                    <select class="debug-select" id="ota-rollback-select">
+                    <select class="settings-select" id="ota-rollback-select">
                         <option value="">Select tag...</option>
                     </select>
-                    <button class="debug-btn rollback-btn" onclick="otaRollback()">Rollback</button>
+                    <button class="settings-btn rollback-btn" onclick="otaRollback()">Rollback</button>
                 </div>
             </div>
             <div class="update-status-text state-idle" id="ota-status">Idle</div>
-        </div>
-
-        <div class="debug-section">
-            <label>Last API Response</label>
-            <div class="debug-info" id="debug-last-data">No data yet</div>
         </div>
     </div>
 
@@ -2884,8 +2809,6 @@
                 if (outageInfo) outageInfo.style.display = 'none';
                 var outageHistory = document.getElementById('outage-history-card');
                 if (outageHistory) outageHistory.style.display = 'none';
-                var debugOutage = document.getElementById('debug-outage-section');
-                if (debugOutage) debugOutage.style.display = 'none';
                 // Stop outage polling intervals
                 if (outageScheduleIntervalId) {
                     clearInterval(outageScheduleIntervalId);
@@ -2907,14 +2830,10 @@
             // Generator support
             if (config.has_generator === true) {
                 document.body.classList.add('generator-visible', 'has-generator');
-                var debugGenSection = document.getElementById('debug-generator-section');
-                if (debugGenSection) debugGenSection.style.display = '';
                 fetchGeneratorData();
                 generatorIntervalId = setInterval(fetchGeneratorData, 30000);
             } else {
                 document.body.classList.remove('generator-visible', 'has-generator');
-                var debugGenSection = document.getElementById('debug-generator-section');
-                if (debugGenSection) debugGenSection.style.display = 'none';
                 if (generatorIntervalId) {
                     clearInterval(generatorIntervalId);
                     generatorIntervalId = null;
@@ -2964,19 +2883,9 @@
             }
         }
 
-        // Debug panel
-        function toggleDebugPanel() {
-            document.getElementById('debug-panel').classList.toggle('open');
-        }
-
-        function testOutageAlert() {
-            speak('Attention. Grid power is currently unavailable.');
-            showNotification('Power Outage', 'Grid electricity is now offline.');
-        }
-
-        function testRestoreAlert() {
-            speak('Grid power has been restored.');
-            showNotification('Power Restored', 'Grid electricity is back online.');
+        // Settings panel
+        function toggleSettingsPanel() {
+            document.getElementById('settings-panel').classList.toggle('open');
         }
 
         // Track grid state
@@ -3406,9 +3315,6 @@
             fetch('/api/data')
                 .then(response => response.json())
                 .then(data => {
-                    // Update debug panel
-                    document.getElementById('debug-last-data').textContent = JSON.stringify(data, null, 2);
-
                     if (data.error) {
                         if (data.error === 'not yet available') {
                             document.getElementById('status').textContent = 'Pulling data from inverter...';
@@ -3551,7 +3457,7 @@
                     }
 
                     // Update generator power from real-time inverter data
-                    if (inverterConfig && inverterConfig.has_generator && generatorOverridePower === null) {
+                    if (inverterConfig && inverterConfig.has_generator) {
                         var genPower = data.generator_power || 0;
                         var genPowerEl = document.getElementById('generator-power');
                         if (genPowerEl) genPowerEl.innerHTML = genPower + '<span class="unit">W</span>';
@@ -3594,15 +3500,12 @@
         // ===== OUTAGE SCHEDULE =====
         var latestInverterData = null;
         var outageScheduleData = null;
-        var outageOverrideData = null;
 
         // Generator data
-        var generatorOverridePower = null;
         var generatorData = null;
         var generatorIntervalId = null;
 
         function fetchOutageSchedule() {
-            if (outageOverrideData) return;
             fetch('/api/outage_schedule')
                 .then(function(r) { return r.json(); })
                 .then(function(data) { outageScheduleData = data; updateOutageInfo(); })
@@ -3611,14 +3514,13 @@
 
         function updateOutageInfo() {
             var el = document.getElementById('grid-outage-info');
-            var d = outageOverrideData || outageScheduleData;
+            var d = outageScheduleData;
             if (!el || !d) { if (el) el.textContent = ''; return; }
             var now = new Date();
             var gridOnline = document.getElementById('grid-banner').classList.contains('online');
-            var useScheduleStatus = outageOverrideData ? d.status : null;
 
-            if (useScheduleStatus === 'active' || (!gridOnline && !outageOverrideData)) {
-                // Grid is off (or debug override to active) — show when it comes back
+            if (!gridOnline) {
+                // Grid is off — show when it comes back
                 if (d.status === 'active' && d.end_time) {
                     var end = new Date(d.end_time);
                     var diff = end - now;
@@ -3683,7 +3585,7 @@
         function updateGridProgressBar() {
             var bar = document.getElementById('grid-banner-bar');
             var fill = document.getElementById('grid-banner-bar-fill');
-            var d = outageOverrideData || outageScheduleData;
+            var d = outageScheduleData;
             var gridBanner = document.getElementById('grid-banner');
             var gridOffline = gridBanner && gridBanner.classList.contains('offline');
 
@@ -3748,9 +3650,6 @@
         };
 
         var currentWeatherMode = '';
-        var weatherOverrideMode = null;
-        var batteryOverrideActive = false;
-        var batteryOverrideSoc = -1;
         var lastWeatherFetch = 0;
         var cachedWeatherData = null;
 
@@ -3869,12 +3768,6 @@
             // Set weather-bg class for CSS animations
             var weatherBg = document.getElementById('weather-bg');
             weatherBg.className = 'weather-' + mode;
-
-            // Update debug display
-            var debugEl = document.getElementById('debug-weather-mode');
-            if (debugEl) {
-                debugEl.textContent = 'Mode: ' + mode + (weatherOverrideMode ? ' (override)' : ' (auto)');
-            }
         }
 
         function updateBatteryOverlay(data) {
@@ -3886,16 +3779,6 @@
                 return;
             }
 
-            // Debug override takes priority
-            if (batteryOverrideSoc >= 0) {
-                var soc = batteryOverrideSoc;
-                var opacity = Math.min(((50 - soc) / 50) * 0.5 + 0.1, 0.6);
-                if (opacity < 0) opacity = 0;
-                overlay.style.background = 'rgba(120, 15, 15, ' + opacity.toFixed(3) + ')';
-                batteryOverrideActive = true;
-                return;
-            }
-
             var gridVoltage = data.grid_voltage || 0;
             var soc = data.battery_soc || 0;
 
@@ -3903,10 +3786,8 @@
                 // More aggressive: 0.1 at SOC 45%, up to 0.6 at SOC 0%
                 var opacity = Math.min(((50 - soc) / 50) * 0.5 + 0.1, 0.6);
                 overlay.style.background = 'rgba(120, 15, 15, ' + opacity.toFixed(3) + ')';
-                batteryOverrideActive = true;
             } else {
                 overlay.style.background = 'rgba(120, 15, 15, 0)';
-                batteryOverrideActive = false;
             }
         }
 
@@ -3914,7 +3795,7 @@
             var now = Date.now();
             // Throttle to once per 60 seconds
             if (cachedWeatherData && (now - lastWeatherFetch) < 60000) {
-                var mode = weatherOverrideMode || getWeatherMode(
+                var mode = getWeatherMode(
                     cachedWeatherData.weather_code,
                     cachedWeatherData.sunrise,
                     cachedWeatherData.sunset
@@ -3930,7 +3811,7 @@
                     if (weatherData.error) return;
                     cachedWeatherData = weatherData;
                     lastWeatherFetch = Date.now();
-                    var mode = weatherOverrideMode || getWeatherMode(
+                    var mode = getWeatherMode(
                         weatherData.weather_code,
                         weatherData.sunrise,
                         weatherData.sunset
@@ -3948,45 +3829,8 @@
             updateBatteryOverlay(data);
         }
 
-        // Debug: override weather mode
-        function debugSetWeatherMode(mode) {
-            if (mode === '') {
-                weatherOverrideMode = null;
-            } else {
-                weatherOverrideMode = mode;
-            }
-            applyWeatherMode(weatherOverrideMode || currentWeatherMode);
-            // If override is set, apply immediately
-            if (weatherOverrideMode) {
-                applyWeatherMode(weatherOverrideMode);
-            } else if (cachedWeatherData) {
-                var autoMode = getWeatherMode(
-                    cachedWeatherData.weather_code,
-                    cachedWeatherData.sunrise,
-                    cachedWeatherData.sunset
-                );
-                applyWeatherMode(autoMode);
-            }
-        }
-
-        // Debug: simulate battery override
-        function debugSetBatteryOverride(soc) {
-            batteryOverrideSoc = soc;
-            var overlay = document.getElementById('battery-overlay');
-            if (soc < 0) {
-                // Reset to auto — next updateBatteryOverlay call will use real data
-                overlay.style.background = 'rgba(120, 15, 15, 0)';
-                batteryOverrideActive = false;
-                return;
-            }
-            var opacity = Math.min(((50 - soc) / 50) * 0.5 + 0.1, 0.6);
-            if (opacity < 0) opacity = 0;
-            overlay.style.background = 'rgba(120, 15, 15, ' + opacity.toFixed(3) + ')';
-        }
-
         // ===== GENERATOR =====
         function fetchGeneratorData() {
-            if (generatorOverridePower !== null) return;
             fetch('/api/generator')
                 .then(function(r) { return r.json(); })
                 .then(function(data) {
@@ -4003,7 +3847,7 @@
             var statusEl = document.getElementById('generator-banner-status');
             if (!banner || !valueEl || !statusEl) return;
 
-            var power = generatorOverridePower !== null ? generatorOverridePower : (data && data.power || 0);
+            var power = data && data.power || 0;
             var running = power > 0;
 
             banner.classList.remove('generator-running', 'generator-off');
@@ -4023,7 +3867,7 @@
             var card = document.getElementById('generator-card');
             if (!card) return;
 
-            var power = generatorOverridePower !== null ? generatorOverridePower : (data && data.power || 0);
+            var power = data && data.power || 0;
             var running = power > 0;
             var todayHours = data ? data.today_runtime_hours : 0;
 
@@ -4075,106 +3919,6 @@
                     oilRow.style.display = 'none';
                 }
             }
-        }
-
-        function debugGeneratorOverride(mode) {
-            var debugEl = document.getElementById('debug-generator-mode');
-            if (mode === 'reset') {
-                generatorOverridePower = null;
-                if (debugEl) debugEl.textContent = 'Mode: auto';
-                fetchGeneratorData();
-                return;
-            }
-            generatorOverridePower = mode; // 0, 3000, or 5000
-            if (debugEl) debugEl.textContent = 'Mode: ' + (mode > 0 ? mode + 'W' : 'OFF');
-
-            // Create fake data for display
-            var fakeData = {
-                enabled: true,
-                running: mode > 0,
-                power: mode,
-                today_runtime_hours: mode > 0 ? 2.5 : 0,
-                today_sessions: [],
-                monthly_runtime_hours: mode > 0 ? 15.3 : 0,
-                fuel_rate: 2.5,
-                fuel_today_liters: mode > 0 ? 6.3 : 0,
-                fuel_monthly_liters: mode > 0 ? 38.3 : 0,
-                oil_change_date: '2025-01-15',
-                oil_change_hours_since: mode > 0 ? 42.5 : 40.0,
-            };
-            generatorData = fakeData;
-
-            // Force card + banner visible
-            document.body.classList.add('generator-visible', 'has-generator');
-            var card = document.getElementById('generator-card');
-            if (card) card.classList.add('generator-card-visible');
-
-            updateGeneratorBanner(fakeData);
-            updateGeneratorCard(fakeData);
-        }
-
-        // Debug: simulate outage schedule override
-        function debugOutageOverride(mode) {
-            var debugEl = document.getElementById('debug-outage-mode');
-            if (mode === 'reset') {
-                outageOverrideData = null;
-                if (debugEl) debugEl.textContent = 'Mode: auto';
-                fetchOutageSchedule();
-                updateGridProgressBar();
-                return;
-            }
-            var now = new Date();
-            if (mode === 'upcoming') {
-                var outageStart = new Date(now.getTime() + 2 * 3600 * 1000);
-                var outageEnd = new Date(outageStart.getTime() + 3 * 3600 * 1000);
-                var elecStart = new Date(now.getTime() - 2 * 3600 * 1000);
-                outageOverrideData = {
-                    status: 'upcoming',
-                    upcoming_windows: [{start: outageStart.toISOString(), end: outageEnd.toISOString()}],
-                    electricity_start: elecStart.toISOString()
-                };
-            } else if (mode === 'active') {
-                var start = new Date(now.getTime() - 3 * 3600 * 1000);
-                var end = new Date(now.getTime() + 1 * 3600 * 1000);
-                outageOverrideData = {
-                    status: 'active',
-                    start_time: start.toISOString(),
-                    end_time: end.toISOString(),
-                    remaining_minutes: 60
-                };
-            } else if (mode === 'clear') {
-                outageOverrideData = {status: 'clear'};
-            } else if (mode === 'unknown') {
-                outageOverrideData = {status: 'unknown'};
-            }
-            if (debugEl) debugEl.textContent = 'Mode: ' + mode;
-            updateOutageInfo();
-            updateGridProgressBar();
-        }
-
-        // Debug: trigger easter egg by playing just the visible portion
-        var easterEggDemos = {
-            'shooting-star': 'shooting-star-demo 2s linear',
-            'bird':          'bird-fly-demo 4s linear',
-            'firefly':       'firefly-demo 4s ease-in-out',
-            'puddle-ripple': 'puddle-ripple-demo 3s ease-out',
-            'big-flake':     'big-flake-demo 5s linear',
-            'leaf':          'leaf-tumble-demo 4s linear',
-            'ghost':         'ghost-demo 5s ease-in-out'
-        };
-
-        function debugTriggerEasterEgg(name) {
-            var el = document.querySelector('.easter-egg.' + name);
-            if (!el) return;
-            el.style.visibility = 'visible';
-            el.style.animation = 'none';
-            void el.offsetWidth;
-            el.style.animation = easterEggDemos[name] || '';
-            el.addEventListener('animationend', function handler() {
-                el.style.animation = '';
-                el.style.visibility = '';
-                el.removeEventListener('animationend', handler);
-            });
         }
 
         // === OTA Update Functions ===
@@ -4241,7 +3985,7 @@
             }
 
             // Hide section if not a git repo
-            const section = document.getElementById('debug-ota-section');
+            const section = document.getElementById('settings-ota-section');
             if (section && data.is_git_repo === false) {
                 section.style.display = 'none';
             }
