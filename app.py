@@ -14,6 +14,7 @@ from datetime import datetime, date
 import os
 import json
 import logging
+import subprocess
 import threading
 import time
 import requests
@@ -29,6 +30,13 @@ OPEN_METEO_URL = (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def is_configured():
+    """Check if .env has valid required config."""
+    ip = os.environ.get("INVERTER_IP", "0.0.0.0")
+    serial = os.environ.get("LOGGER_SERIAL", "0")
+    return ip != "0.0.0.0" and ip != "" and serial != "0" and serial != ""
 
 
 class WeatherPoller:
@@ -229,41 +237,63 @@ def build_inverter_config(inv):
     )
 
 
-inverter = DeyeInverter(INVERTER_IP, LOGGER_SERIAL)
-inverter_config = build_inverter_config(inverter)
-inverter.config = inverter_config
+# Service variables — initialised by init_services() when configured
+inverter = None
+inverter_config = None
+battery_sampler = None
+outage_poller = None
+weather_poller = None
+inverter_poller = None
+update_poller = None
+update_manager = None
 
-battery_sampler = BatterySampler(inverter, interval=30)
-battery_sampler.start()
+_configured = is_configured()
 
-# Outage schedule provider
-OUTAGE_PROVIDER_NAME = os.environ.get("OUTAGE_PROVIDER", "lvivoblenergo")
-OUTAGE_GROUP = os.environ.get("OUTAGE_GROUP")
-outage_provider = create_outage_provider(
-    OUTAGE_PROVIDER_NAME,
-    group=OUTAGE_GROUP,
-    region_id=os.environ.get("OUTAGE_REGION_ID", "25"),
-    dso_id=os.environ.get("OUTAGE_DSO_ID", "902"),
-)
-if outage_provider is not None:
-    outage_poller = OutageSchedulePoller(provider=outage_provider)
-    outage_poller.start()
-else:
-    outage_poller = None
-    logger.info("Outage schedule disabled (OUTAGE_PROVIDER=none)")
 
-weather_poller = WeatherPoller()
-weather_poller.start()
-inverter_poller = InverterPoller(inverter, battery_sampler,
-                                cache_file=INVERTER_CACHE_FILE)
-inverter_poller.start()
+def init_services():
+    """Initialise all background services (inverter, pollers, etc.)."""
+    global inverter, inverter_config, battery_sampler
+    global outage_poller, weather_poller, inverter_poller
+    global update_poller, update_manager
 
-# OTA update system
-GITHUB_REPO = os.environ.get("GITHUB_REPO", "ivanursul/deye-dashboard")
-UPDATE_CHECK_INTERVAL = int(os.environ.get("UPDATE_CHECK_INTERVAL", "600"))
-update_poller = UpdatePoller(repo=GITHUB_REPO, poll_interval=UPDATE_CHECK_INTERVAL)
-update_manager = UpdateManager()
-update_poller.start()
+    inverter = DeyeInverter(INVERTER_IP, LOGGER_SERIAL)
+    inverter_config = build_inverter_config(inverter)
+    inverter.config = inverter_config
+
+    battery_sampler = BatterySampler(inverter, interval=30)
+    battery_sampler.start()
+
+    # Outage schedule provider
+    outage_provider_name = os.environ.get("OUTAGE_PROVIDER", "lvivoblenergo")
+    outage_group = os.environ.get("OUTAGE_GROUP")
+    outage_prov = create_outage_provider(
+        outage_provider_name,
+        group=outage_group,
+        region_id=os.environ.get("OUTAGE_REGION_ID", "25"),
+        dso_id=os.environ.get("OUTAGE_DSO_ID", "902"),
+    )
+    if outage_prov is not None:
+        outage_poller = OutageSchedulePoller(provider=outage_prov)
+        outage_poller.start()
+    else:
+        logger.info("Outage schedule disabled (OUTAGE_PROVIDER=none)")
+
+    weather_poller = WeatherPoller()
+    weather_poller.start()
+    inverter_poller = InverterPoller(inverter, battery_sampler,
+                                    cache_file=INVERTER_CACHE_FILE)
+    inverter_poller.start()
+
+    # OTA update system
+    github_repo = os.environ.get("GITHUB_REPO", "ivanursul/deye-dashboard")
+    update_check_interval = int(os.environ.get("UPDATE_CHECK_INTERVAL", "600"))
+    update_poller = UpdatePoller(repo=github_repo, poll_interval=update_check_interval)
+    update_manager = UpdateManager()
+    update_poller.start()
+
+
+if _configured:
+    init_services()
 
 # Phase data collection
 last_sample_time = None
@@ -492,12 +522,14 @@ def add_no_cache_headers(response):
 @app.route("/")
 def index():
     """Serve the dashboard page."""
-    return render_template("index.html")
+    return render_template("index.html", first_run=not _configured)
 
 
 @app.route("/api/data")
 def get_data():
     """API endpoint to get current inverter data (cached)."""
+    if not _configured:
+        return jsonify({"error": "not configured", "config": None}), 503
     data = inverter_poller.data
     if not data:
         return jsonify({"error": "not yet available"}), 503
@@ -634,6 +666,8 @@ def clear_outages():
 @app.route("/api/weather")
 def get_weather():
     """Get current weather conditions."""
+    if not _configured:
+        return jsonify({"error": "not configured"}), 503
     data = weather_poller.data
     if not data:
         return jsonify({"error": "not yet available"}), 503
@@ -643,7 +677,7 @@ def get_weather():
 @app.route("/api/generator")
 def get_generator():
     """Get generator status and runtime data."""
-    if not inverter_config.has_generator:
+    if not _configured or not inverter_config.has_generator:
         return jsonify({"enabled": False})
 
     now = datetime.now()
@@ -716,6 +750,14 @@ def get_generator():
 @app.route("/api/update/status")
 def get_update_status():
     """Get current version, update availability, and manager state."""
+    if not _configured:
+        return jsonify({
+            "current_version": get_current_version(),
+            "latest_tag": None, "update_available": False,
+            "available_tags": [], "last_checked": None,
+            "manager_state": "idle", "manager_message": "",
+            "manager_error": None, "is_git_repo": False,
+        })
     data = update_poller.data or {}
     mgr_status = update_manager.status
     return jsonify({
@@ -771,6 +813,77 @@ def update_preflight():
     return jsonify({"ok": ok, "issues": issues})
 
 
+@app.route("/api/config/status")
+def config_status():
+    """Return whether the dashboard is configured."""
+    return jsonify({"configured": _configured, "first_run": not _configured})
+
+
+@app.route("/api/config", methods=["GET"])
+def get_config():
+    """Return current configuration values from .env."""
+    from setup import load_existing_env, MANAGED_KEYS
+    values, _ = load_existing_env()
+    # Mask the Telegram bot token
+    token = values.get("TELEGRAM_BOT_TOKEN", "")
+    if token and len(token) > 8:
+        values["TELEGRAM_BOT_TOKEN"] = token[:4] + "****" + token[-4:]
+    return jsonify(values)
+
+
+@app.route("/api/config", methods=["POST"])
+def save_config():
+    """Save configuration values to .env and restart the service."""
+    from setup import load_existing_env, write_env
+    new_values = request.json
+    if not new_values or not isinstance(new_values, dict):
+        return jsonify({"status": "error", "error": "Invalid request body"}), 400
+
+    # Load existing env to preserve extra lines
+    existing, extra_lines = load_existing_env()
+
+    # If the token is masked, keep the existing one
+    new_token = new_values.get("TELEGRAM_BOT_TOKEN", "")
+    if "****" in new_token and "TELEGRAM_BOT_TOKEN" in existing:
+        new_values["TELEGRAM_BOT_TOKEN"] = existing["TELEGRAM_BOT_TOKEN"]
+
+    # Merge — new values override existing
+    existing.update(new_values)
+    write_env(existing, extra_lines)
+
+    # Schedule a service restart after 2 seconds
+    def _restart():
+        time.sleep(2)
+        try:
+            subprocess.Popen(["sudo", "systemctl", "restart", "deye-dashboard"])
+        except Exception:
+            logger.warning("Could not restart via systemctl, exiting process")
+            os._exit(0)
+
+    threading.Timer(0, _restart).start()
+    return jsonify({"status": "ok", "restarting": True})
+
+
+@app.route("/api/config/discover")
+def config_discover():
+    """Discover inverters on the local network with retries."""
+    from discover_inverter import discover
+    max_attempts = 3
+    devices = []
+    for attempt in range(1, max_attempts + 1):
+        try:
+            devices = discover(quiet=True)
+        except Exception:
+            logger.exception("Discovery attempt %d failed", attempt)
+        if devices:
+            logger.info("Discovery found %d device(s) on attempt %d", len(devices), attempt)
+            break
+        if attempt < max_attempts:
+            logger.info("Discovery attempt %d found nothing, retrying...", attempt)
+            time.sleep(2)
+    return jsonify({"devices": devices})
+
+
 def start_telegram_bot():
     """Start the Telegram bot in a background thread if configured."""
     if os.environ.get("TELEGRAM_ENABLED", "true").lower() == "false":
@@ -815,19 +928,23 @@ if __name__ == "__main__":
     logger.info("=== Deye Dashboard starting ===")
     logger.info("Version: %s", get_current_version())
     logger.info("INVERTER_IP=%s  LOGGER_SERIAL=%s", INVERTER_IP, LOGGER_SERIAL)
-    logger.info("Inverter config: %s", inverter_config.to_dict())
-    logger.info("Generator: has_generator=%s fuel_rate=%s oil_change=%s",
-                inverter_config.has_generator, GENERATOR_FUEL_RATE, GENERATOR_OIL_CHANGE_DATE or "N/A")
-    logger.info("OUTAGE_PROVIDER=%s  OUTAGE_GROUP=%s", OUTAGE_PROVIDER_NAME, OUTAGE_GROUP)
-    logger.info("WEATHER coords: lat=%s lon=%s", WEATHER_LATITUDE, WEATHER_LONGITUDE)
-    telegram_enabled = os.environ.get("TELEGRAM_ENABLED", "true").lower() != "false"
-    telegram_token_set = bool(os.environ.get("TELEGRAM_BOT_TOKEN"))
-    logger.info("TELEGRAM: enabled=%s token_set=%s", telegram_enabled, telegram_token_set)
 
-    # Flask debug reloader spawns two processes. Only start the bot once:
-    # - If WERKZEUG_RUN_MAIN is set, we're in the reloader child — start bot
-    # - If it's not set and use_reloader is False, start bot (no reloader)
-    # - Otherwise skip (we're the reloader parent, child will start it)
-    if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
-        start_telegram_bot()
+    if _configured:
+        logger.info("Inverter config: %s", inverter_config.to_dict())
+        logger.info("Generator: has_generator=%s fuel_rate=%s oil_change=%s",
+                    inverter_config.has_generator, GENERATOR_FUEL_RATE, GENERATOR_OIL_CHANGE_DATE or "N/A")
+        outage_prov_name = os.environ.get("OUTAGE_PROVIDER", "lvivoblenergo")
+        outage_grp = os.environ.get("OUTAGE_GROUP")
+        logger.info("OUTAGE_PROVIDER=%s  OUTAGE_GROUP=%s", outage_prov_name, outage_grp)
+        logger.info("WEATHER coords: lat=%s lon=%s", WEATHER_LATITUDE, WEATHER_LONGITUDE)
+        telegram_enabled = os.environ.get("TELEGRAM_ENABLED", "true").lower() != "false"
+        telegram_token_set = bool(os.environ.get("TELEGRAM_BOT_TOKEN"))
+        logger.info("TELEGRAM: enabled=%s token_set=%s", telegram_enabled, telegram_token_set)
+
+        # Flask debug reloader spawns two processes. Only start the bot once.
+        if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+            start_telegram_bot()
+    else:
+        logger.info("First-run mode — serving onboarding wizard")
+
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)), debug=True)

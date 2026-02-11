@@ -1540,6 +1540,275 @@
         .update-status-text.state-error { color: #f87171; }
         .update-status-text.state-idle { color: #64748b; }
 
+        /* Onboarding Wizard */
+        .onboarding-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .onboarding-overlay.hidden { display: none; }
+
+        .onboarding-card {
+            background: rgba(30, 30, 50, 0.95);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 16px;
+            width: 92%;
+            max-width: 560px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 32px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .onboarding-card h2 {
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        .onboarding-card .subtitle {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-bottom: 24px;
+        }
+
+        .onboarding-progress {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            margin-bottom: 28px;
+        }
+        .onboarding-progress .step-circle {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; font-weight: 600;
+            background: rgba(255,255,255,0.1);
+            color: #64748b;
+            border: 2px solid rgba(255,255,255,0.1);
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+        .onboarding-progress .step-circle.active {
+            background: rgba(99, 102, 241, 0.3);
+            color: #a5b4fc;
+            border-color: rgba(99, 102, 241, 0.6);
+        }
+        .onboarding-progress .step-circle.done {
+            background: rgba(34, 197, 94, 0.3);
+            color: #4ade80;
+            border-color: rgba(34, 197, 94, 0.5);
+        }
+        .onboarding-progress .step-line {
+            width: 40px; height: 2px;
+            background: rgba(255,255,255,0.1);
+            transition: background 0.3s;
+        }
+        .onboarding-progress .step-line.done {
+            background: rgba(34, 197, 94, 0.4);
+        }
+
+        .onboarding-step { display: none; }
+        .onboarding-step.active { display: block; }
+
+        .onboarding-field {
+            margin-bottom: 16px;
+        }
+        .onboarding-field label {
+            display: block;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-bottom: 6px;
+        }
+        .onboarding-input,
+        .onboarding-select {
+            width: 100%;
+            padding: 10px 12px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .onboarding-input:focus,
+        .onboarding-select:focus {
+            border-color: rgba(99, 102, 241, 0.6);
+        }
+        .onboarding-input.error {
+            border-color: rgba(248, 113, 113, 0.6);
+        }
+        .onboarding-input::placeholder {
+            color: #475569;
+        }
+
+        .onboarding-toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+        }
+        .onboarding-toggle-row span {
+            font-size: 0.9rem;
+        }
+        .onboarding-toggle {
+            position: relative;
+            width: 44px; height: 24px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+        .onboarding-toggle.on {
+            background: rgba(99, 102, 241, 0.6);
+        }
+        .onboarding-toggle .toggle-knob {
+            position: absolute;
+            top: 2px; left: 2px;
+            width: 20px; height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            transition: left 0.2s;
+        }
+        .onboarding-toggle.on .toggle-knob {
+            left: 22px;
+        }
+
+        .onboarding-btn-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        .onboarding-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .onboarding-btn.primary {
+            background: rgba(99, 102, 241, 0.7);
+            color: #fff;
+        }
+        .onboarding-btn.primary:hover {
+            background: rgba(99, 102, 241, 0.9);
+        }
+        .onboarding-btn.secondary {
+            background: rgba(255,255,255,0.1);
+            color: #94a3b8;
+        }
+        .onboarding-btn.secondary:hover {
+            background: rgba(255,255,255,0.2);
+            color: #fff;
+        }
+        .onboarding-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .discover-results {
+            margin: 12px 0;
+        }
+        .discover-device {
+            padding: 12px;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .discover-device:hover {
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+        .discover-device.selected {
+            border-color: rgba(99, 102, 241, 0.7);
+            background: rgba(99, 102, 241, 0.1);
+        }
+        .discover-device .device-ip {
+            font-family: monospace;
+            font-size: 0.95rem;
+        }
+        .discover-device .device-model {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            margin-top: 2px;
+        }
+
+        .onboarding-radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 8px 0;
+        }
+        .onboarding-radio {
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+        .onboarding-radio:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+        .onboarding-radio.selected {
+            border-color: rgba(99, 102, 241, 0.7);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .onboarding-spinner {
+            display: inline-block;
+            width: 20px; height: 20px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-top-color: #a5b4fc;
+            border-radius: 50%;
+            animation: onb-spin 0.8s linear infinite;
+        }
+        @keyframes onb-spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .restart-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 10001;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+        .restart-overlay.hidden { display: none; }
+        .restart-overlay .restart-spinner {
+            width: 48px; height: 48px;
+            border: 3px solid rgba(255,255,255,0.15);
+            border-top-color: #a5b4fc;
+            border-radius: 50%;
+            animation: onb-spin 1s linear infinite;
+        }
+        .restart-overlay .restart-text {
+            font-size: 1.1rem;
+            color: #94a3b8;
+        }
+
+        .onboarding-conditional { display: none; }
+        .onboarding-conditional.visible { display: block; }
+
         /* Energy Flow Diagram Styles */
         .energy-flow-container {
             max-width: 1400px;
@@ -2715,6 +2984,163 @@
     </div>
 
     <!-- Settings Panel -->
+    <!-- Onboarding Wizard Overlay -->
+    <div class="onboarding-overlay {% if first_run %}{% else %}hidden{% endif %}" id="onboarding-overlay">
+        <div class="onboarding-card">
+            <div class="onboarding-progress" id="onboarding-progress">
+                <div class="step-circle active" data-step="1">1</div>
+                <div class="step-line" data-line="1"></div>
+                <div class="step-circle" data-step="2">2</div>
+                <div class="step-line" data-line="2"></div>
+                <div class="step-circle" data-step="3">3</div>
+                <div class="step-line" data-line="3"></div>
+                <div class="step-circle" data-step="4">4</div>
+            </div>
+
+            <!-- Step 1: Inverter Connection -->
+            <div class="onboarding-step active" id="onb-step-1">
+                <h2>Inverter Connection</h2>
+                <p class="subtitle">Connect to your Deye/Solarman inverter on the local network.</p>
+
+                <div style="margin-bottom: 16px;">
+                    <button class="onboarding-btn secondary" id="onb-scan-btn" onclick="discoverInverters()" style="width:100%;">
+                        Scan Network
+                    </button>
+                    <div id="onb-scan-status" style="text-align:center; margin-top:8px; font-size:0.8rem; color:#94a3b8;"></div>
+                </div>
+                <div class="discover-results" id="onb-discover-results"></div>
+
+                <div class="onboarding-field">
+                    <label>Inverter IP Address *</label>
+                    <input type="text" class="onboarding-input" id="onb-ip" placeholder="192.168.1.100">
+                </div>
+                <div class="onboarding-field">
+                    <label>Logger Serial Number *</label>
+                    <input type="text" class="onboarding-input" id="onb-serial" placeholder="2712345678">
+                </div>
+            </div>
+
+            <!-- Step 2: Weather & Location -->
+            <div class="onboarding-step" id="onb-step-2">
+                <h2>Weather & Location</h2>
+                <p class="subtitle">Set your coordinates for weather forecasts. You can skip this step.</p>
+
+                <div style="margin-bottom: 16px;">
+                    <button class="onboarding-btn secondary" onclick="useMyLocation()" style="width:100%;">
+                        Use My Location
+                    </button>
+                </div>
+                <div class="onboarding-field">
+                    <label>Latitude</label>
+                    <input type="number" step="any" class="onboarding-input" id="onb-lat" placeholder="50.4501" value="50.4501">
+                </div>
+                <div class="onboarding-field">
+                    <label>Longitude</label>
+                    <input type="number" step="any" class="onboarding-input" id="onb-lon" placeholder="30.5234" value="30.5234">
+                </div>
+            </div>
+
+            <!-- Step 3: Outage Provider -->
+            <div class="onboarding-step" id="onb-step-3">
+                <h2>Outage Provider</h2>
+                <p class="subtitle">Get power outage schedules for your region. You can skip this step.</p>
+
+                <div class="onboarding-radio-group" id="onb-outage-radios">
+                    <div class="onboarding-radio selected" data-value="lvivoblenergo" onclick="selectOutageProvider(this)">Lvivoblenergo</div>
+                    <div class="onboarding-radio" data-value="yasno" onclick="selectOutageProvider(this)">YASNO (DTEK)</div>
+                    <div class="onboarding-radio" data-value="none" onclick="selectOutageProvider(this)">None (disable)</div>
+                </div>
+
+                <div class="onboarding-conditional visible" id="onb-outage-lviv-fields">
+                    <div class="onboarding-field">
+                        <label>Outage Group (e.g. 1.1)</label>
+                        <input type="text" class="onboarding-input" id="onb-outage-group" placeholder="1.1" value="1.1">
+                    </div>
+                </div>
+
+                <div class="onboarding-conditional" id="onb-outage-yasno-fields">
+                    <div class="onboarding-field">
+                        <label>Region ID (e.g. 25 = Kyiv)</label>
+                        <input type="number" class="onboarding-input" id="onb-yasno-region" placeholder="25" value="25">
+                    </div>
+                    <div class="onboarding-field">
+                        <label>DSO ID (e.g. 902 = DTEK Kyiv)</label>
+                        <input type="number" class="onboarding-input" id="onb-yasno-dso" placeholder="902" value="902">
+                    </div>
+                    <div class="onboarding-field">
+                        <label>Group (e.g. 2.1)</label>
+                        <input type="text" class="onboarding-input" id="onb-yasno-group" placeholder="2.1" value="2.1">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Optional Features -->
+            <div class="onboarding-step" id="onb-step-4">
+                <h2>Optional Features</h2>
+                <p class="subtitle">Configure generator tracking and Telegram bot.</p>
+
+                <div style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 16px; margin-bottom: 16px;">
+                    <div class="onboarding-toggle-row">
+                        <span>Generator connected</span>
+                        <div class="onboarding-toggle" id="onb-gen-toggle" onclick="toggleOnb(this, 'onb-gen-fields')">
+                            <div class="toggle-knob"></div>
+                        </div>
+                    </div>
+                    <div class="onboarding-conditional" id="onb-gen-fields">
+                        <div class="onboarding-field">
+                            <label>Fuel consumption (L/hour)</label>
+                            <input type="number" step="0.1" class="onboarding-input" id="onb-gen-fuel" placeholder="0" value="0">
+                        </div>
+                        <div class="onboarding-field">
+                            <label>Last oil change date</label>
+                            <input type="date" class="onboarding-input" id="onb-gen-oil">
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="onboarding-toggle-row">
+                        <span>Telegram Bot</span>
+                        <div class="onboarding-toggle" id="onb-tg-toggle" onclick="toggleOnb(this, 'onb-tg-fields')">
+                            <div class="toggle-knob"></div>
+                        </div>
+                    </div>
+                    <div class="onboarding-conditional" id="onb-tg-fields">
+                        <div class="onboarding-field">
+                            <label>Bot Token</label>
+                            <input type="text" class="onboarding-input" id="onb-tg-token" placeholder="123456:ABC-DEF...">
+                        </div>
+                        <div class="onboarding-field">
+                            <label>Allowed User IDs (comma-separated)</label>
+                            <input type="text" class="onboarding-input" id="onb-tg-users" placeholder="12345678, 87654321">
+                        </div>
+                        <div class="onboarding-toggle-row">
+                            <span style="font-size:0.85rem;">Public mode (any user can query)</span>
+                            <div class="onboarding-toggle" id="onb-tg-public-toggle" onclick="toggleOnb(this)">
+                                <div class="toggle-knob"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation buttons -->
+            <div class="onboarding-btn-row">
+                <button class="onboarding-btn secondary" id="onb-back-btn" onclick="onboardingGoTo(onboardingStep - 1)" style="visibility:hidden;">Back</button>
+                <div style="display:flex; gap:8px;">
+                    <button class="onboarding-btn secondary" id="onb-skip-btn" onclick="onboardingGoTo(onboardingStep + 1)" style="display:none;">Skip</button>
+                    <button class="onboarding-btn primary" id="onb-next-btn" onclick="onboardingNext()">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Restart Overlay -->
+    <div class="restart-overlay hidden" id="restart-overlay">
+        <div class="restart-spinner"></div>
+        <div class="restart-text" id="restart-text">Restarting service...</div>
+    </div>
+
     <div class="settings-panel" id="settings-panel">
         <h3>
             Settings
@@ -2745,6 +3171,11 @@
                 </div>
             </div>
             <div class="update-status-text state-idle" id="ota-status">Idle</div>
+        </div>
+
+        <div class="settings-section">
+            <label>Configuration</label>
+            <button class="settings-btn" onclick="openConfigEditor()">Edit Configuration</button>
         </div>
     </div>
 
@@ -4069,6 +4500,339 @@
         // Initial OTA fetch and periodic refresh
         fetchOtaStatus();
         setInterval(fetchOtaStatus, 300000);
+
+        // === Onboarding Wizard ===
+        var onboardingStep = 1;
+        var onboardingEditMode = false;
+        var selectedOutageProvider = 'lvivoblenergo';
+
+        function checkFirstRun() {
+            {% if first_run %}
+            showOnboarding(false);
+            {% endif %}
+        }
+
+        function showOnboarding(editMode) {
+            onboardingEditMode = editMode;
+            onboardingStep = 1;
+            var overlay = document.getElementById('onboarding-overlay');
+            overlay.classList.remove('hidden');
+            updateOnboardingUI();
+
+            if (editMode) {
+                // Load current config values
+                fetch('/api/config')
+                    .then(function(r) { return r.json(); })
+                    .then(function(cfg) {
+                        if (cfg.INVERTER_IP) document.getElementById('onb-ip').value = cfg.INVERTER_IP;
+                        if (cfg.LOGGER_SERIAL) document.getElementById('onb-serial').value = cfg.LOGGER_SERIAL;
+                        if (cfg.WEATHER_LATITUDE) document.getElementById('onb-lat').value = cfg.WEATHER_LATITUDE;
+                        if (cfg.WEATHER_LONGITUDE) document.getElementById('onb-lon').value = cfg.WEATHER_LONGITUDE;
+
+                        // Outage provider
+                        var prov = cfg.OUTAGE_PROVIDER || 'lvivoblenergo';
+                        selectOutageProviderByValue(prov);
+                        if (cfg.OUTAGE_GROUP) document.getElementById('onb-outage-group').value = cfg.OUTAGE_GROUP;
+                        if (cfg.OUTAGE_REGION_ID) document.getElementById('onb-yasno-region').value = cfg.OUTAGE_REGION_ID;
+                        if (cfg.OUTAGE_DSO_ID) document.getElementById('onb-yasno-dso').value = cfg.OUTAGE_DSO_ID;
+                        if (cfg.OUTAGE_GROUP && prov === 'yasno') document.getElementById('onb-yasno-group').value = cfg.OUTAGE_GROUP;
+
+                        // Generator
+                        if (cfg.INVERTER_HAS_GENERATOR && cfg.INVERTER_HAS_GENERATOR.toLowerCase() === 'true') {
+                            var genToggle = document.getElementById('onb-gen-toggle');
+                            if (!genToggle.classList.contains('on')) toggleOnb(genToggle, 'onb-gen-fields');
+                        }
+                        if (cfg.GENERATOR_FUEL_RATE) document.getElementById('onb-gen-fuel').value = cfg.GENERATOR_FUEL_RATE;
+                        if (cfg.GENERATOR_OIL_CHANGE_DATE) document.getElementById('onb-gen-oil').value = cfg.GENERATOR_OIL_CHANGE_DATE;
+
+                        // Telegram
+                        if (cfg.TELEGRAM_ENABLED && cfg.TELEGRAM_ENABLED.toLowerCase() === 'true') {
+                            var tgToggle = document.getElementById('onb-tg-toggle');
+                            if (!tgToggle.classList.contains('on')) toggleOnb(tgToggle, 'onb-tg-fields');
+                        }
+                        if (cfg.TELEGRAM_BOT_TOKEN) document.getElementById('onb-tg-token').value = cfg.TELEGRAM_BOT_TOKEN;
+                        if (cfg.TELEGRAM_ALLOWED_USERS) document.getElementById('onb-tg-users').value = cfg.TELEGRAM_ALLOWED_USERS;
+                        if (cfg.TELEGRAM_PUBLIC && cfg.TELEGRAM_PUBLIC.toLowerCase() === 'true') {
+                            var pubToggle = document.getElementById('onb-tg-public-toggle');
+                            if (!pubToggle.classList.contains('on')) toggleOnb(pubToggle);
+                        }
+                    })
+                    .catch(function() {});
+            }
+        }
+
+        function hideOnboarding() {
+            document.getElementById('onboarding-overlay').classList.add('hidden');
+        }
+
+        function updateOnboardingUI() {
+            // Update progress circles
+            var circles = document.querySelectorAll('#onboarding-progress .step-circle');
+            var lines = document.querySelectorAll('#onboarding-progress .step-line');
+            circles.forEach(function(c) {
+                var s = parseInt(c.getAttribute('data-step'));
+                c.classList.remove('active', 'done');
+                if (s === onboardingStep) c.classList.add('active');
+                else if (s < onboardingStep) c.classList.add('done');
+            });
+            lines.forEach(function(l) {
+                var s = parseInt(l.getAttribute('data-line'));
+                l.classList.toggle('done', s < onboardingStep);
+            });
+
+            // Show/hide steps
+            for (var i = 1; i <= 4; i++) {
+                var stepEl = document.getElementById('onb-step-' + i);
+                stepEl.classList.toggle('active', i === onboardingStep);
+            }
+
+            // Back button visibility
+            document.getElementById('onb-back-btn').style.visibility = onboardingStep > 1 ? 'visible' : 'hidden';
+
+            // Skip button (steps 2, 3)
+            var skipBtn = document.getElementById('onb-skip-btn');
+            skipBtn.style.display = (onboardingStep === 2 || onboardingStep === 3) ? '' : 'none';
+
+            // Next/Finish button text
+            var nextBtn = document.getElementById('onb-next-btn');
+            if (onboardingStep === 4) {
+                nextBtn.textContent = onboardingEditMode ? 'Save & Restart' : 'Finish & Start';
+            } else {
+                nextBtn.textContent = 'Next';
+            }
+        }
+
+        function onboardingGoTo(step) {
+            if (step < 1) step = 1;
+            if (step > 4) step = 4;
+            onboardingStep = step;
+            updateOnboardingUI();
+            if (step === 2) useMyLocation();
+        }
+
+        function onboardingNext() {
+            if (onboardingStep < 4) {
+                if (onboardingStep === 1 && !validateStep1()) return;
+                onboardingGoTo(onboardingStep + 1);
+            } else {
+                saveConfig();
+            }
+        }
+
+        function validateStep1() {
+            var ip = document.getElementById('onb-ip').value.trim();
+            var serial = document.getElementById('onb-serial').value.trim();
+            var valid = true;
+
+            document.getElementById('onb-ip').classList.remove('error');
+            document.getElementById('onb-serial').classList.remove('error');
+
+            if (!ip || !/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(ip)) {
+                document.getElementById('onb-ip').classList.add('error');
+                valid = false;
+            }
+            if (!serial || !/^\d+$/.test(serial) || serial === '0') {
+                document.getElementById('onb-serial').classList.add('error');
+                valid = false;
+            }
+            return valid;
+        }
+
+        function discoverInverters() {
+            var btn = document.getElementById('onb-scan-btn');
+            var statusEl = document.getElementById('onb-scan-status');
+            var resultsEl = document.getElementById('onb-discover-results');
+
+            btn.disabled = true;
+            statusEl.innerHTML = '<span class="onboarding-spinner"></span> Scanning network...';
+            resultsEl.innerHTML = '';
+
+            fetch('/api/config/discover')
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    btn.disabled = false;
+                    var devices = data.devices || [];
+                    if (devices.length === 0) {
+                        statusEl.textContent = 'No inverters found on the network.';
+                        return;
+                    }
+                    statusEl.textContent = 'Found ' + devices.length + ' device(s):';
+                    resultsEl.innerHTML = '';
+                    devices.forEach(function(dev) {
+                        var div = document.createElement('div');
+                        div.className = 'discover-device';
+                        div.innerHTML = '<div class="device-ip">' + dev.ip + '</div>' +
+                            '<div class="device-model">' + (dev.model || 'Unknown model') + '</div>';
+                        div.onclick = function() {
+                            document.querySelectorAll('.discover-device').forEach(function(d) { d.classList.remove('selected'); });
+                            div.classList.add('selected');
+                            document.getElementById('onb-ip').value = dev.ip;
+                        };
+                        resultsEl.appendChild(div);
+                    });
+                })
+                .catch(function() {
+                    btn.disabled = false;
+                    statusEl.textContent = 'Scan failed. Enter details manually.';
+                });
+        }
+
+        function useMyLocation() {
+            // Try browser geolocation first (requires HTTPS)
+            if (navigator.geolocation && location.protocol === 'https:') {
+                navigator.geolocation.getCurrentPosition(function(pos) {
+                    document.getElementById('onb-lat').value = pos.coords.latitude.toFixed(4);
+                    document.getElementById('onb-lon').value = pos.coords.longitude.toFixed(4);
+                });
+                return;
+            }
+            // Fallback: IP-based geolocation (works over HTTP)
+            fetch('http://ip-api.com/json/?fields=lat,lon')
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (data.lat && data.lon) {
+                        document.getElementById('onb-lat').value = data.lat.toFixed(4);
+                        document.getElementById('onb-lon').value = data.lon.toFixed(4);
+                    }
+                })
+                .catch(function() {});
+        }
+
+        function selectOutageProvider(el) {
+            document.querySelectorAll('#onb-outage-radios .onboarding-radio').forEach(function(r) { r.classList.remove('selected'); });
+            el.classList.add('selected');
+            selectedOutageProvider = el.getAttribute('data-value');
+
+            document.getElementById('onb-outage-lviv-fields').classList.toggle('visible', selectedOutageProvider === 'lvivoblenergo');
+            document.getElementById('onb-outage-yasno-fields').classList.toggle('visible', selectedOutageProvider === 'yasno');
+        }
+
+        function selectOutageProviderByValue(value) {
+            var radios = document.querySelectorAll('#onb-outage-radios .onboarding-radio');
+            radios.forEach(function(r) {
+                r.classList.remove('selected');
+                if (r.getAttribute('data-value') === value) {
+                    r.classList.add('selected');
+                }
+            });
+            selectedOutageProvider = value;
+            document.getElementById('onb-outage-lviv-fields').classList.toggle('visible', value === 'lvivoblenergo');
+            document.getElementById('onb-outage-yasno-fields').classList.toggle('visible', value === 'yasno');
+        }
+
+        function toggleOnb(el, fieldsId) {
+            el.classList.toggle('on');
+            if (fieldsId) {
+                document.getElementById(fieldsId).classList.toggle('visible', el.classList.contains('on'));
+            }
+        }
+
+        function saveConfig() {
+            var config = {};
+
+            // Step 1
+            config.INVERTER_IP = document.getElementById('onb-ip').value.trim();
+            config.LOGGER_SERIAL = document.getElementById('onb-serial').value.trim();
+
+            // Step 2
+            config.WEATHER_LATITUDE = document.getElementById('onb-lat').value.trim() || '50.4501';
+            config.WEATHER_LONGITUDE = document.getElementById('onb-lon').value.trim() || '30.5234';
+
+            // Step 3
+            config.OUTAGE_PROVIDER = selectedOutageProvider;
+            if (selectedOutageProvider === 'lvivoblenergo') {
+                config.OUTAGE_GROUP = document.getElementById('onb-outage-group').value.trim() || '1.1';
+            } else if (selectedOutageProvider === 'yasno') {
+                config.OUTAGE_REGION_ID = document.getElementById('onb-yasno-region').value.trim() || '25';
+                config.OUTAGE_DSO_ID = document.getElementById('onb-yasno-dso').value.trim() || '902';
+                config.OUTAGE_GROUP = document.getElementById('onb-yasno-group').value.trim() || '2.1';
+            }
+
+            // Step 4 — Generator
+            var genOn = document.getElementById('onb-gen-toggle').classList.contains('on');
+            config.INVERTER_HAS_GENERATOR = genOn ? 'true' : 'false';
+            if (genOn) {
+                var fuel = document.getElementById('onb-gen-fuel').value.trim();
+                if (fuel && parseFloat(fuel) > 0) config.GENERATOR_FUEL_RATE = fuel;
+                var oil = document.getElementById('onb-gen-oil').value;
+                if (oil) config.GENERATOR_OIL_CHANGE_DATE = oil;
+            }
+
+            // Step 4 — Telegram
+            var tgOn = document.getElementById('onb-tg-toggle').classList.contains('on');
+            config.TELEGRAM_ENABLED = tgOn ? 'true' : 'false';
+            if (tgOn) {
+                config.TELEGRAM_BOT_TOKEN = document.getElementById('onb-tg-token').value.trim();
+                config.TELEGRAM_ALLOWED_USERS = document.getElementById('onb-tg-users').value.trim();
+                config.TELEGRAM_PUBLIC = document.getElementById('onb-tg-public-toggle').classList.contains('on') ? 'true' : 'false';
+            }
+
+            // Validate step 1
+            if (!config.INVERTER_IP || !config.LOGGER_SERIAL) {
+                onboardingGoTo(1);
+                validateStep1();
+                return;
+            }
+
+            var nextBtn = document.getElementById('onb-next-btn');
+            nextBtn.disabled = true;
+            nextBtn.textContent = 'Saving...';
+
+            fetch('/api/config', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(config),
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.status === 'ok') {
+                    hideOnboarding();
+                    showRestartOverlay();
+                } else {
+                    nextBtn.disabled = false;
+                    nextBtn.textContent = 'Retry';
+                    alert('Error: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(function(e) {
+                nextBtn.disabled = false;
+                nextBtn.textContent = 'Retry';
+                alert('Failed to save: ' + e);
+            });
+        }
+
+        function showRestartOverlay() {
+            var overlay = document.getElementById('restart-overlay');
+            overlay.classList.remove('hidden');
+            var textEl = document.getElementById('restart-text');
+            var startTime = Date.now();
+
+            var pollInterval = setInterval(function() {
+                fetch('/api/config/status')
+                    .then(function(r) { return r.json(); })
+                    .then(function(data) {
+                        if (data.configured) {
+                            clearInterval(pollInterval);
+                            textEl.textContent = 'Ready! Reloading...';
+                            setTimeout(function() { window.location.reload(); }, 500);
+                        }
+                    })
+                    .catch(function() {
+                        // Server still restarting
+                        if (Date.now() - startTime > 30000) {
+                            textEl.textContent = 'Taking longer than expected. Try refreshing manually.';
+                        }
+                    });
+            }, 2000);
+        }
+
+        function openConfigEditor() {
+            toggleSettingsPanel();
+            showOnboarding(true);
+        }
+
+        // Check first run on page load
+        checkFirstRun();
 
     </script>
 </body>

@@ -198,7 +198,7 @@ Type=simple
 User=${REMOTE_USER}
 WorkingDirectory=${REMOTE_DIR}
 Environment="PATH=${REMOTE_DIR}/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-EnvironmentFile=${REMOTE_DIR}/.env
+EnvironmentFile=-${REMOTE_DIR}/.env
 ExecStart=${REMOTE_DIR}/venv/bin/python app.py
 Restart=always
 RestartSec=10
