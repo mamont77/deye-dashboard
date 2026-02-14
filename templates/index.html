@@ -3999,7 +3999,7 @@
                         if (loadW > 0) {
                             var capacityWh = latestInverterData.battery_max_available_capacity_wh;
                             var remainingWh = (soc / 100) * capacityWh;
-                            var remainingMs = (remainingWh / loadW) * 3600 * 1000;
+                            var remainingMs = (remainingWh / Math.abs(latestInverterData.battery_power)) * 3600 * 1000;
                             remaining = '~' + formatCountdown(remainingMs) + ' remaining';
                         } else {
                             remaining = 'Battery: ' + soc + '%';
