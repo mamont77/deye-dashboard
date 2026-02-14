@@ -2864,11 +2864,11 @@
             <div class="stats-row">
                 <div class="stat">
                     <div class="value" id="generator-today-runtime">--</div>
-                    <div class="label">Today Runtime (h)</div>
+                    <div class="label">Today Runtime</div>
                 </div>
                 <div class="stat">
                     <div class="value" id="generator-monthly-runtime">--</div>
-                    <div class="label">Monthly Runtime (h)</div>
+                    <div class="label">Monthly Runtime</div>
                 </div>
             </div>
             <div class="stats-row" id="generator-fuel-row" style="display: none; margin-top: 16px;">
@@ -2883,7 +2883,7 @@
             </div>
             <div class="stat" id="generator-oil-row" style="display: none; margin-top: 16px;">
                 <div class="value" id="generator-oil-hours">--</div>
-                <div class="label">Hours Since Oil Change</div>
+                <div class="label">Since Oil Change</div>
             </div>
         </div>
 
@@ -4300,6 +4300,19 @@
                 .catch(function() { generatorData = null; });
         }
 
+        function formatDuration(decimalHours) {
+            console.log(decimalHours);
+            if (decimalHours === null || decimalHours === undefined || isNaN(decimalHours)) return '--';
+            var totalMinutes = Math.round(decimalHours * 60);
+            var h = Math.floor(totalMinutes / 60);
+            var m = totalMinutes % 60;
+            if (h > 0) {
+                return h + 'h ' + m + 'mins';
+            } else {
+                return m + 'mins';
+            }
+        }
+
         function updateGeneratorBanner(data) {
             var banner = document.getElementById('generator-banner');
             var valueEl = document.getElementById('generator-banner-value');
@@ -4314,7 +4327,7 @@
                 banner.classList.add('generator-running');
                 valueEl.textContent = power + 'W';
                 var hours = data ? data.today_runtime_hours : 0;
-                statusEl.textContent = 'Runtime: ' + hours.toFixed(1) + 'h today';
+                statusEl.textContent = 'Runtime: ' + formatDuration(hours) + ' today';
             } else {
                 banner.classList.add('generator-off');
                 valueEl.textContent = 'OFF';
@@ -4348,10 +4361,10 @@
             if (powerEl) powerEl.innerHTML = power + '<span class="unit">W</span>';
 
             var todayEl = document.getElementById('generator-today-runtime');
-            if (todayEl) todayEl.textContent = data ? data.today_runtime_hours.toFixed(1) : '--';
+            if (todayEl) todayEl.textContent = data ? formatDuration(data.today_runtime_hours) : '--';
 
             var monthlyEl = document.getElementById('generator-monthly-runtime');
-            if (monthlyEl) monthlyEl.textContent = data ? data.monthly_runtime_hours.toFixed(1) : '--';
+            if (monthlyEl) monthlyEl.textContent = data ? formatDuration(data.monthly_runtime_hours) : '--';
 
             // Fuel row
             var fuelRow = document.getElementById('generator-fuel-row');
@@ -4373,7 +4386,7 @@
                 if (data.oil_change_date) {
                     oilRow.style.display = '';
                     var oilEl = document.getElementById('generator-oil-hours');
-                    if (oilEl) oilEl.textContent = data.oil_change_hours_since != null ? data.oil_change_hours_since.toFixed(1) : '--';
+                    if (oilEl) oilEl.textContent = data.oil_change_hours_since != null ? formatDuration(data.oil_change_hours_since) : '--';
                 } else {
                     oilRow.style.display = 'none';
                 }
